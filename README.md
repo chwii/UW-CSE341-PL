@@ -1,1 +1,1 @@
-# UW-CSE341-PL
+This repo holds my code written for homework of University of Washington CSE341 Programming Languages course, taught by Dan Grossman, using ML, Racket and Ruby with a strong emphasis on functional programming.
