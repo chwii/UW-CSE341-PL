@@ -1,8 +1,3 @@
-(* Dan Grossman, Coursera PL, HW2 Provided Code *)
-
-(* if you use this function to compare two strings (returns true if the same
-   string), then you avoid several of the functions in problem 1 having
-   polymorphic types that may be confusing *)
 fun same_string(s1 : string, s2 : string) =
     s1 = s2
 
