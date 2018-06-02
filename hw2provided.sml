@@ -18,9 +18,9 @@ fun all_except_option (str, strs) =
 fun get_substitutions1 (ssts, str) = 
     case ssts of
          [] => []
-       | ss::[] => valOf (all_except_option(str, ss))
-       | ss::ss' => (case (all_except_option(str, ss)) of
-                         SOME b => b | _ => [])@(get_substitutions1(ss', str))
+       | ss::ss' => case (all_except_option(str, ss)) of
+                         NONE => get_substitutions1(ss', str)
+                       | SOME b => b @ (get_substitutions1(ss', str))
 
 fun get_substitutions2 (ssts, str) =
   let fun helper (strs, rs) =
@@ -36,15 +36,13 @@ fun get_substitutions2 (ssts, str) =
 
 fun similar_names (ssts, {first=a,middle=b,last=c}) =
   let val all = get_substitutions2(ssts, a)
+      fun helper (st, rs) = 
+          case st of
+               [] => rs
+             | x::[] => rs@[{first=x, middle=b,last=c}]
+             | x::xs' => helper(xs', (rs@[{first=x,middle= b, last=c}]))
   in
-    let fun helper (st, rs) = 
-            case st of
-                 [] => rs
-               | x::[] => rs@[{first=x, middle=b,last=c}]
-               | x::xs' => helper(xs', (rs@[{first=x,middle= b, last=c}]))
-    in
-        helper(all, {first=a,middle=b,last=c}::[])
-    end
+      helper(all, {first=a,middle=b,last=c}::[])
   end
 
 
@@ -70,7 +68,8 @@ fun card_color (s, r) =
 
 fun card_value (s, r) =
   case r of 
-       Num v => v
+       Ace => 11
+     | Num v => v
      | _ => 10
 
 fun remove_card (cs, c, e) =
@@ -100,4 +99,22 @@ fun score (cards, goal) =
       val score = if sum > goal then 3 * (sum-goal) else (goal-sum)
   in
       if all_same_color cards then score div 2 else score
+  end
+
+fun officiate (cards, moves, goal) =
+  let fun helper (cl, hc, mvs) =
+        case mvs of
+             [] => score(hc, goal)
+           | mv::mvs' => case mv of
+                          Discard c => helper(cl, remove_card(hc, c, IllegalMove), mvs')
+                        | Draw => case cl of 
+                                       [] => score(hc, goal) 
+                                     | c::cs' => let val fs = score(c::hc, goal)
+                                                 in
+                                                   if fs > goal 
+                                                   then fs 
+                                                   else helper(cs', c::hc, mvs') 
+                                                 end
+  in
+    helper(cards, [], moves)
   end
