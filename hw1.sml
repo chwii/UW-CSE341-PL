@@ -1,3 +1,8 @@
+(*
+unfinished and discontinued.
+wrote these solutions after week3 courses and before read the requirement,
+hence the Pattern Matching, which was not allowed in hw1.
+*)
 fun is_older (a,b) =
   case (a, b) of
        ((x, y, z), (u, v, w)) => if x < u then true else if 
