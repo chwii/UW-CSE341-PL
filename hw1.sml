@@ -1,8 +1,3 @@
-(*
-unfinished and discontinued.
-wrote these solutions after week3 courses and before read the requirement,
-hence the Pattern Matching, which was not allowed in hw1.
-*)
 fun is_older (a,b) =
   case (a, b) of
        ((x, y, z), (u, v, w)) => if x < u then true else if 
@@ -58,4 +53,32 @@ fun date_to_string date =
          a)
   end
 
+fun number_before_reaching_sum (sum, lst) =
+  let fun helper (acc, sm, ls) =
+        case ls of
+             x::xs' => if x + sm >= sum then acc - 1 else helper(acc+1, x + sm,
+             xs')
+  in
+    helper(1, 0, lst)
+  end
 
+fun what_month day =
+  let val DAY_OF_MONTH = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
+  in
+    number_before_reaching_sum(day, DAY_OF_MONTH) + 1
+  end
+
+fun month_range (day1, day2) =
+  if day1 > day2 
+  then []
+  else (what_month day1)::(month_range(day1+1, day2))
+
+fun oldest lst =
+  if null lst
+  then NONE
+  else let val li = oldest (tl lst) 
+       in
+         if isSome li andalso is_older(valOf li, hd lst)
+         then li
+         else SOME (hd lst)
+       end
